@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<header><small>URBANFIT CONTROL CENTER</small><h1>Dashboard</h1></header>
+<section class="stats five">
+  <article><span>Socios</span><b>{{socios}}</b></article>
+  <article><span>Activos</span><b>{{activos}}</b></article>
+  <article><span>Ingresos acumulados</span><b>Q{{'%.2f'|format(ingresos)}}</b><small>Hoy: Q{{'%.2f'|format(ingresos_hoy)}}</small></article>
+  <article><span>Asistencia hoy</span><b>{{hoy}}</b></article>
+  <article><span>Stock suplementos</span><b>{{stock_total}}</b></article>
+</section>
+<div class="card">
+  <h2>Acceso según rol</h2>
+  <p><b>Jefe:</b> control total del sistema, incluidos usuarios e inventario.</p>
+  <p><b>Administrativo:</b> socios, pagos, ventas, asistencia, clases, reportes e inventario.</p>
+</div>
+{% endblock %}

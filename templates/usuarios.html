@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<header><small>SEGURIDAD</small><h1>Usuarios</h1></header>
+<div class="card table"><table><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Estado</th></tr>
+{% for r in rows %}<tr><td>{{r.username}}</td><td>{{r.nombre}}</td><td><span class="badge">{{r.rol}}</span></td><td>{{'Activo' if r.activo else 'Inactivo'}}</td></tr>{% endfor %}
+</table><p class="note">El sistema utiliza únicamente los roles Jefe y Administrativo.</p></div>
+{% endblock %}

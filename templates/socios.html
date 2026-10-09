@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<header><small>GESTIÓN DE CLIENTES</small><h1>Socios y membresías</h1></header>
+<div class="card">
+  <h2>Nuevo socio</h2>
+  <form class="grid" method="post">
+    <label>Nombre<input name="nombre" required></label>
+    <label>Teléfono<input name="telefono"></label>
+    <label>Correo<input type="email" name="email"></label>
+    <label>Fecha de inscripción<input type="date" name="fecha_inscripcion" required></label>
+    <label>Membresía
+      <select name="membresia" id="membresia" required>
+        {% for nombre in membresias %}<option value="{{ nombre }}">{{ nombre }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Monto acordado (Q)
+      <input id="monto_membresia" name="monto_membresia" type="number" step="0.01" min="0" placeholder="Ingrese el monto manualmente" required>
+    </label>
+    <div class="note"><b>Estado de pago automático:</b> un socio nuevo queda como <b>Pendiente de pago</b>. Al registrar el pago, pasa a <b>Activo</b> mientras la fecha de vencimiento siga vigente y cambia a <b>Vencido</b> automáticamente cuando esa fecha ya pasó.</div>
+    <div class="note">La fecha de vencimiento se calcula automáticamente al registrar el pago. En <b>Pago Anual</b>, el monto se calcula solo: Q150 × 12 = Q1,800, menos 15% de descuento = <b>Q1,530.00</b>.</div>
+    <button>Guardar socio</button>
+  </form>
+</div>
+<div class="card table">
+  <table>
+    <tr><th>Nombre</th><th>Teléfono</th><th>Membresía</th><th>Monto</th><th>Vencimiento</th><th>Estado de pago</th></tr>
+    {% for r in rows %}
+      <tr>
+        <td>{{r.nombre}}<small>{{r.email}}</small></td><td>{{r.telefono}}</td><td>{{r.membresia}}</td>
+        <td>Q{{ '%.2f'|format(r.monto_membresia or 0) }}</td><td>{{r.vencimiento or 'Pendiente de pago'}}</td><td><span class="badge">{{r.estado}}</span></td>
+      </tr>
+    {% else %}<tr><td colspan="6">No hay socios registrados.</td></tr>{% endfor %}
+  </table>
+</div>
+
+<script>
+const membresiaSelect = document.getElementById('membresia');
+const montoMembresia = document.getElementById('monto_membresia');
+const MONTO_ANUAL = 1530.00;
+
+function actualizarMontoMembresia(){
+  if(membresiaSelect.value === 'Pago Anual'){
+    montoMembresia.value = MONTO_ANUAL.toFixed(2);
+    montoMembresia.readOnly = true;
+    montoMembresia.title = 'Monto anual automático: Q150 x 12 con 15% de descuento';
+  } else {
+    if(montoMembresia.readOnly){
+      montoMembresia.value = '';
+    }
+    montoMembresia.readOnly = false;
+    montoMembresia.title = '';
+  }
+}
+
+membresiaSelect.addEventListener('change', actualizarMontoMembresia);
+actualizarMontoMembresia();
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Inventario | UrbanFit{% endblock %}
+{% block content %}
+<header><small>INVENTARIO URBANFIT</small><h1>Suplementos y bebidas</h1></header>
+<section class="inventory-summary">
+  <article><span>Productos registrados</span><b>{{ rows|length }}</b></article>
+  <article><span>Unidades en stock</span><b>{{ total_unidades }}</b></article>
+  <article><span>Valor del inventario</span><b>Q{{ '%.2f'|format(valor_inventario) }}</b></article>
+</section>
+
+{% if session.get('rol') in ['jefe', 'administrativo'] %}
+<div class="card product-create-card">
+  <h2>Agregar producto al inventario</h2>
+  <form method="post" class="product-create-grid">
+    <label>Producto<input name="nombre" placeholder="Nombre del producto" required></label>
+    <label>Categoría<input name="categoria" placeholder="Ej. Proteínas" required></label>
+    <label>Precio (Q)<input type="number" min="0" step="0.01" name="precio_nuevo" required></label>
+    <label>Stock inicial<input type="number" min="0" name="stock_nuevo" value="0" required></label>
+    <label class="product-note-field">Nota<input name="nota" placeholder="Descripción o referencia del precio"></label>
+    <button name="accion" value="agregar">+ Agregar producto</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="card table inventory-card">
+  <form method="post" id="inventarioGeneral">
+    <table>
+      <tr>
+        <th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Ajuste rápido</th>{% if session.get('rol') == 'jefe' %}<th>Eliminar</th>{% endif %}
+      </tr>
+      {% for r in rows %}
+      <tr>
+        <td><strong>{{ r.nombre }}</strong>{% if r.nota %}<small>{{ r.nota }}</small>{% endif %}</td>
+        <td>{{ r.categoria }}</td>
+        <td><input class="mini-input price-input" type="number" min="0" step="0.01" name="precio_{{ r.id }}" value="{{ '%.2f'|format(r.precio) }}" title="Precio"></td>
+        <td><input class="mini-input" type="number" min="0" name="stock_{{ r.id }}" value="{{ r.stock }}" title="Stock"></td>
+        <td>
+          {% if r.stock <= 0 %}<span class="stock-badge out">Agotado</span>
+          {% elif r.stock <= 3 %}<span class="stock-badge low">Stock bajo</span>
+          {% else %}<span class="stock-badge ok">Disponible</span>{% endif %}
+        </td>
+        <td>
+          <div class="inventory-actions compact-actions">
+            <button class="mini-btn add" type="submit" name="accion" value="sumar" formaction="{{ url_for('suplementos') }}" onclick="this.form.producto_id.value='{{ r.id }}'" title="Sumar 1">+1</button>
+            <button class="mini-btn sub" type="submit" name="accion" value="restar" formaction="{{ url_for('suplementos') }}" onclick="this.form.producto_id.value='{{ r.id }}'" title="Restar 1">−1</button>
+          </div>
+        </td>
+        {% if session.get('rol') == 'jefe' %}
+        <td><button class="danger-btn" type="submit" name="accion" value="eliminar" onclick="if(!confirm('¿Eliminar {{ r.nombre }} del inventario?')) return false; this.form.producto_id.value='{{ r.id }}'">Eliminar</button></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+    <input type="hidden" name="producto_id" value="">
+    <div class="inventory-save-all">
+      <button class="save-all-btn" type="submit" name="accion" value="guardar_todos">💾 Guardar todos los cambios</button>
+    </div>
+  </form>
+</div>
+<p class="note inventory-note">Jefe y Administrativo pueden agregar productos y actualizar precio o existencias. El Jefe conserva la opción de eliminar productos. Usa el botón “Guardar todos los cambios” para registrar el inventario completo de una sola vez.</p>
+{% endblock %}

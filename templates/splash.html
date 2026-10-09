@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}UrbanFit | Inicio{% endblock %}
+{% block public %}
+<section class="splash">
+  <div class="neon-bg neon-pink"></div><div class="neon-bg neon-cyan"></div>
+  <a class="splash-logo" href="{{ url_for('login') }}">
+    <div class="logo-orb hero-orb"><img class="hero-logo" src="{{ url_for('static', filename='img/urbanfit_logo_transparent.png') }}" alt="UrbanFit logo"></div>
+    <h1>Sistema de Gestión <span>UrbanFit</span></h1>
+    <p>Control de socios, pagos, asistencia, clases y reportes.</p>
+    <small>Haz clic en el logo para ingresar →</small>
+  </a>
+</section>
+{% endblock %}

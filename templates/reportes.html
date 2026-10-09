@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<header><small>ANÁLISIS</small><h1>Reportes</h1></header>
+<div class="report-grid">
+  <div class="card table"><h2>Ingresos por mes</h2><table><tr><th>Mes</th><th>Operaciones</th><th>Total</th></tr>{% for r in meses %}<tr><td>{{r.mes}}</td><td>{{r.cantidad}}</td><td>Q{{'%.2f'|format(r.total)}}</td></tr>{% else %}<tr><td colspan="3">Sin datos.</td></tr>{% endfor %}</table></div>
+  <div class="card table"><h2>Socios por estado</h2><table><tr><th>Estado</th><th>Cantidad</th></tr>{% for r in estados %}<tr><td>{{r.estado}}</td><td>{{r.cantidad}}</td></tr>{% else %}<tr><td colspan="2">Sin datos.</td></tr>{% endfor %}</table></div>
+  <div class="card table"><h2>Inventario por categoría</h2><table><tr><th>Categoría</th><th>Unidades</th><th>Valor</th></tr>{% for r in inventario %}<tr><td>{{r.categoria}}</td><td>{{r.unidades or 0}}</td><td>Q{{'%.2f'|format(r.valor or 0)}}</td></tr>{% else %}<tr><td colspan="3">Sin datos.</td></tr>{% endfor %}</table></div>
+  <div class="card table"><h2>Ventas por producto</h2><table><tr><th>Producto</th><th>Unidades</th><th>Total vendido</th></tr>{% for r in ventas_productos %}<tr><td>{{r.producto}}</td><td>{{r.unidades}}</td><td>Q{{'%.2f'|format(r.total)}}</td></tr>{% else %}<tr><td colspan="3">Sin ventas.</td></tr>{% endfor %}</table></div>
+</div>
+{% endblock %}

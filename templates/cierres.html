@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Cierres | UrbanFit{% endblock %}
+{% block content %}
+<header><small>CONTROL DE CAJA</small><h1>Cierres financieros</h1></header>
+
+<section class="closing-summary">
+  <article><span>Ingresos de hoy (pagos + ventas)</span><b>Q{{ '%.2f'|format(resumen_hoy.total) }}</b></article>
+  <article><span>Efectivo</span><b>Q{{ '%.2f'|format(resumen_hoy.efectivo) }}</b></article>
+  <article><span>Transferencias</span><b>Q{{ '%.2f'|format(resumen_hoy.transferencia) }}</b></article>
+  <article><span>Tarjeta</span><b>Q{{ '%.2f'|format(resumen_hoy.tarjeta) }}</b></article>
+</section>
+
+<div class="closing-grid">
+  <div class="card">
+    <h2>Cierre diario</h2>
+    <p class="note">Genera un corte de todos los ingresos registrados: membresías/pagos y ventas de productos.</p>
+    <form method="post">
+      <label>Fecha<input type="date" name="fecha" value="{{ hoy }}" required></label>
+      <button name="accion" value="cierre_diario">Realizar cierre diario</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Cierres del mes</h2>
+    <p class="note">El cierre del 15 abarca del día 1 al 15. El cierre de fin de mes abarca del día 16 al último día del mes.</p>
+    <form method="post">
+      <label>Mes<input type="month" name="mes" value="{{ mes_actual }}" required></label>
+      <div class="closing-buttons">
+        <button name="accion" value="cierre_15">Cierre del día 15</button>
+        <button class="cyan-btn" name="accion" value="cierre_fin_mes">Cierre de fin de mes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card table">
+  <h2>Historial de cierres diarios</h2>
+  <table>
+    <tr><th>Fecha</th><th>Operaciones</th><th>Efectivo</th><th>Transferencia</th><th>Tarjeta</th><th>Total</th><th>Realizado por</th></tr>
+    {% for r in diarios %}<tr><td>{{r.fecha}}</td><td>{{r.operaciones}}</td><td>Q{{'%.2f'|format(r.efectivo)}}</td><td>Q{{'%.2f'|format(r.transferencia)}}</td><td>Q{{'%.2f'|format(r.tarjeta)}}</td><td><strong>Q{{'%.2f'|format(r.total)}}</strong></td><td>{{r.usuario or '—'}}</td></tr>
+    {% else %}<tr><td colspan="7">Todavía no se han realizado cierres diarios.</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="card table">
+  <h2>Cierres quincenales y de fin de mes</h2>
+  <table>
+    <tr><th>Tipo</th><th>Periodo</th><th>Operaciones</th><th>Efectivo</th><th>Transferencia</th><th>Tarjeta</th><th>Total</th></tr>
+    {% for r in periodos %}<tr><td>{{r.tipo}}</td><td>{{r.fecha_inicio}} al {{r.fecha_fin}}</td><td>{{r.operaciones}}</td><td>Q{{'%.2f'|format(r.efectivo)}}</td><td>Q{{'%.2f'|format(r.transferencia)}}</td><td>Q{{'%.2f'|format(r.tarjeta)}}</td><td><strong>Q{{'%.2f'|format(r.total)}}</strong></td></tr>
+    {% else %}<tr><td colspan="7">Todavía no se han realizado cierres de periodo.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

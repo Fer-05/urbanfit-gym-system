@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.db-*
+*.log
+.pytest_cache/
+app_respaldo_local.py

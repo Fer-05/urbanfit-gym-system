@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: urbanfit
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: JEFE_PASSWORD
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

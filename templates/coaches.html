@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Coaches | UrbanFit{% endblock %}
+{% block content %}
+<header><small>PERSONAL URBANFIT</small><h1>Gestión de Coaches</h1></header>
+<div class="cols">
+  <div class="card">
+    <h2>Agregar coach</h2>
+    <form method="post">
+      <label>Nombre del coach<input name="nombre" placeholder="Ej. Diego" required></label>
+      <button name="accion" value="agregar">+ Agregar coach</button>
+    </form>
+    <p class="note">Los coaches en estado <b>Activo</b> aparecerán en la lista de Clases. Si un coach sale de vacaciones, puedes marcarlo como <b>Inactivo</b> sin eliminarlo.</p>
+  </div>
+  <div class="card table">
+    <h2>Coaches registrados</h2>
+    <table>
+      <tr><th>Nombre</th><th>Estado</th><th>Acciones</th></tr>
+      {% for r in rows %}
+      <tr>
+        <td><strong>{{ r.nombre }}</strong></td>
+        <td><span class="badge coach-status {{ 'coach-inactive' if not r.activo else '' }}">{{ 'Activo' if r.activo else 'Inactivo' }}</span></td>
+        <td>
+          <div class="coach-actions">
+            <form method="post" class="inline-form">
+              <input type="hidden" name="coach_id" value="{{ r.id }}">
+              <button class="{{ 'status-off-btn' if r.activo else 'status-on-btn' }}" name="accion" value="cambiar_estado">{{ 'Marcar inactivo' if r.activo else 'Activar' }}</button>
+            </form>
+            <form method="post" class="inline-form" onsubmit="return confirm('¿Eliminar a {{ r.nombre }} de la lista de coaches?');">
+              <input type="hidden" name="coach_id" value="{{ r.id }}">
+              <button class="danger-btn" name="accion" value="eliminar">Eliminar</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}<tr><td colspan="3">No hay coaches registrados.</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<header><small>PROGRAMACIÓN</small><h1>Clases</h1></header>
+<div class="cols">
+  <div class="card">
+    <h2>Nueva clase</h2>
+    <form method="post">
+      <label>Clase<input name="nombre" required></label>
+      <label>Coach
+        <select name="coach" required>
+          {% for coach in coaches %}<option value="{{ coach.nombre }}" {% if loop.first %}selected{% endif %}>{{ coach.nombre }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Horario<input name="horario" placeholder="7:00 AM" required></label>
+      <label>Capacidad<input type="number" name="capacidad" value="20"></label>
+      <label>Estado<select name="estado"><option>Activa</option><option>Inactiva</option></select></label>
+      <button>Guardar</button>
+    </form>
+  </div>
+  <div class="card table">
+    <table><tr><th>Clase</th><th>Coach</th><th>Horario</th><th>Cap.</th><th>Estado</th></tr>
+    {% for r in rows %}<tr><td>{{r.nombre}}</td><td>{{r.coach}}</td><td>{{r.horario}}</td><td>{{r.capacidad}}</td><td>{{r.estado}}</td></tr>
+    {% else %}<tr><td colspan="5">Sin clases.</td></tr>{% endfor %}</table>
+  </div>
+</div>
+{% endblock %}

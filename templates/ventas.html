@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Ventas | UrbanFit{% endblock %}
+{% block content %}
+<header><small>PUNTO DE VENTA</small><h1>Ventas</h1></header>
+<section class="closing-summary sales-summary">
+  <article><span>Venta de hoy</span><b>Q{{ '%.2f'|format(total_hoy) }}</b></article>
+  <article><span>Unidades vendidas hoy</span><b>{{ unidades_hoy }}</b></article>
+  <article><span>Productos disponibles</span><b>{{ productos|selectattr('stock','gt',0)|list|length }}</b></article>
+  <article><span>Productos agotados</span><b>{{ productos|selectattr('stock','equalto',0)|list|length }}</b></article>
+</section>
+<div class="cols sales-layout">
+  <div class="card">
+    <h2>Registrar venta</h2>
+    <form method="post" id="ventaForm">
+      <label>Producto<select name="producto_id" id="productoVenta" required><option value="">Seleccionar producto</option>{% for p in productos %}<option value="{{ p.id }}" data-precio="{{ p.precio }}" data-stock="{{ p.stock }}" {% if p.stock <= 0 %}disabled{% endif %}>{{ p.nombre }} — Q{{ '%.2f'|format(p.precio) }} — Stock: {{ p.stock }}{% if p.stock <= 0 %} (Agotado){% endif %}</option>{% endfor %}</select></label>
+      <div class="sale-info-grid"><label>Precio unitario (Q)<input id="precioVenta" value="0.00" readonly></label><label>Stock disponible<input id="stockVenta" value="0" readonly></label></div>
+      <label>Cantidad<input type="number" min="1" value="1" name="cantidad" id="cantidadVenta" required></label>
+      <label>Total (Q)<input id="totalVenta" value="0.00" readonly></label>
+      <label>Fecha<input type="date" name="fecha" value="{{ hoy }}" required></label>
+      <label>Método de pago<select name="metodo" required><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select></label>
+      <button type="submit">Registrar venta y descontar stock</button>
+    </form>
+  </div>
+  <div class="card table"><h2>Historial de ventas</h2><table><tr><th>Fecha</th><th>Producto</th><th>Cant.</th><th>Precio</th><th>Total</th><th>Método</th><th>Usuario</th></tr>{% for r in rows %}<tr><td>{{r.fecha}}</td><td>{{r.producto}}</td><td>{{r.cantidad}}</td><td>Q{{'%.2f'|format(r.precio_unitario)}}</td><td><strong>Q{{'%.2f'|format(r.total)}}</strong></td><td>{{r.metodo}}</td><td>{{r.usuario or '—'}}</td></tr>{% else %}<tr><td colspan="7">Todavía no hay ventas registradas.</td></tr>{% endfor %}</table></div>
+</div>
+<p class="note">Cada venta descuenta automáticamente las unidades del inventario. Los ingresos de ventas se incluyen también en los cierres de caja.</p>
+<script>(function(){const producto=document.getElementById('productoVenta');const cantidad=document.getElementById('cantidadVenta');const precio=document.getElementById('precioVenta');const stock=document.getElementById('stockVenta');const total=document.getElementById('totalVenta');function actualizar(){const op=producto.options[producto.selectedIndex];const p=parseFloat(op?.dataset?.precio||0);const s=parseInt(op?.dataset?.stock||0);const q=parseInt(cantidad.value||1);precio.value=p.toFixed(2);stock.value=s;cantidad.max=s>0?s:1;total.value=(p*Math.max(q,0)).toFixed(2);}producto.addEventListener('change',actualizar);cantidad.addEventListener('input',actualizar);actualizar();})();</script>
+{% endblock %}
